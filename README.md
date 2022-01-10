@@ -5,3 +5,18 @@ It simply replicates the event bus' register() method, using a custom IEventHand
 that weren't loaded by a specific classloader, which i image to be the LauncClassLoader or some sort of mod classloader.
 
 However, my one simply creates a wrapper around Method#invoke(), which works fine
+
+example:
+
+```
+public class MyEventHandlers {
+    public MyEventHandlers() {
+        REghZyForgeBridge.register(this);
+    }
+    
+    @ForgeSubscribe
+    public void onChunkEvent(ChunkEvent e) {
+        ...
+    }
+}
+```
