@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="core">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../MinecraftUtils/modding/mod-making-1.6.4/libraries/core" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../MinecraftUtils/modding/mod-making-1.6.4/libraries/core" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../../MinecraftUtils/modding/mod-making-1.6.4/libraries/core" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../../MinecraftUtils/modding/mod-making-1.6.4/libraries/core" recursive="false" type="SOURCES" />
+  </library>
+</component>

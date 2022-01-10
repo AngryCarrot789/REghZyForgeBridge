@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CarrotForgeBridge:jar">
+    <output-path>$USER_HOME$/Desktop</output-path>
+    <root id="archive" name="REghZyForgeBridge.jar">
+      <element id="module-output" name="REghZyForgeBridge" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/mcmod.info" />
+      <element id="module-source" name="REghZyForgeBridge" />
+    </root>
+  </artifact>
+</component>

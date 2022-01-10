@@ -1,0 +1,13 @@
+[
+{
+  "modid": "reghzybridge",
+  "name": "REghZyForgeBridge",
+  "description": "Mod bridge between forge and bukkit, to allow the usage of forge events in bukkit plugins",
+  "version": "1.1.0",
+  "mcversion": "1.6.4",
+  "authorList": ["REghZY", "TheRareCarrot"],
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
