@@ -120,37 +120,11 @@ public class REghZyForgeBridge {
     public static void unregister(EventBus bus, Object target) {
         Map<Object, ArrayList<IEventListener>> listeners = Reflect.getBusListeners(bus);
         if (listeners.containsKey(target)) {
-            return;
+            int id = Reflect.getBusID(bus);
+            for (IEventListener listener : listeners.remove(target)) {
+                ListenerList.unregiterAll(id, listener);
+            }
         }
-
-        int id = Reflect.getBusID(bus);
-        for (IEventListener listener : listeners.remove(target)) {
-            ListenerList.unregiterAll(id, listener);
-        }
-    }
-
-    /**
-     * Unregisters all methods, in the given target instance, that are annotated with {@link ForgeSubscribe}, for the normal {@link MinecraftForge#EVENT_BUS}
-     * @param target The target to unregister the methods of
-     */
-    public static void unregister(Object target) {
-        unregister(MinecraftForge.EVENT_BUS, target);
-    }
-
-    /**
-     * Unregisters all methods, in the given target instance, that are annotated with {@link ForgeSubscribe}, for the {@link MinecraftForge#TERRAIN_GEN_BUS}
-     * @param target The target to unregister the methods of
-     */
-    public static void unregisterTerrain(Object target) {
-        unregister(MinecraftForge.TERRAIN_GEN_BUS, target);
-    }
-
-    /**
-     * Unregisters all methods, in the given target instance, that are annotated with {@link ForgeSubscribe}, for the {@link MinecraftForge#ORE_GEN_BUS}
-     * @param target The target to unregister the methods of
-     */
-    public static void unregisterOreGen(Object target) {
-        unregister(MinecraftForge.ORE_GEN_BUS, target);
     }
 
     /**
