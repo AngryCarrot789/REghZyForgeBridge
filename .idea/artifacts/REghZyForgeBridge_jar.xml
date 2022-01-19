@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="CarrotForgeBridge:jar">
+  <artifact type="jar" name="REghZyForgeBridge:jar">
     <output-path>$USER_HOME$/Desktop</output-path>
     <root id="archive" name="REghZyForgeBridge.jar">
       <element id="module-output" name="REghZyForgeBridge" />

@@ -1,7 +1,6 @@
 package reghzy.bridge;
 
 import com.google.common.reflect.TypeToken;
-import com.sun.xml.internal.ws.client.sei.MethodHandler;
 import cpw.mods.fml.common.Mod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
@@ -40,12 +39,7 @@ public class REghZyForgeBridge {
                 Class<?>[] parameters = method.getParameterTypes();
                 Method real;
                 try {
-                    if (parameters.length == 0) {
-                        real = clazz.getDeclaredMethod(method.getName());
-                    }
-                    else {
-                        real = clazz.getDeclaredMethod(method.getName(), parameters);
-                    }
+                    real = clazz.getDeclaredMethod(method.getName(), parameters);
                 }
                 catch (NoSuchMethodException e) {
                     continue;
