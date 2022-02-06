@@ -5,6 +5,9 @@
       <element id="module-output" name="REghZyForgeBridge" />
       <element id="file-copy" path="$PROJECT_DIR$/src/mcmod.info" />
       <element id="module-source" name="REghZyForgeBridge" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
     </root>
   </artifact>
 </component>

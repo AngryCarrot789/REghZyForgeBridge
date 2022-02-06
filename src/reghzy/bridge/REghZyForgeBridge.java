@@ -2,6 +2,9 @@ package reghzy.bridge;
 
 import com.google.common.reflect.TypeToken;
 import cpw.mods.fml.common.Mod;
+import joptsimple.OptionSet;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.EventBus;
@@ -9,11 +12,15 @@ import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.IEventListener;
 import net.minecraftforge.event.ListenerList;
+import net.minecraftforge.event.world.ChunkEvent;
+import reghzy.bridge.asm.ASMHandlerWrapper;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +32,10 @@ public class REghZyForgeBridge {
         Logger.getLogger("Minecraft").info("----------------------------------------");
         Logger.getLogger("Minecraft").info("REghZyForgeBridge - Class CTOR :)))))))))");
         Logger.getLogger("Minecraft").info("----------------------------------------");
+    }
+
+    public static void onServerCrash(DedicatedServer server, CrashReport report) {
+        MinecraftForge.EVENT_BUS.post(new ServerCrashEvent(server, report));
     }
 
     public static void register(EventBus bus, Object target) {
@@ -63,14 +74,14 @@ public class REghZyForgeBridge {
                         }
 
                         Event event = (Event) ctor.newInstance();
-                        MethodHandler listener = new MethodHandler(target, method);
-                        event.getListenerList().register(busId, listener.getPriority(), listener);
+                        ASMHandlerWrapper handler = new ASMHandlerWrapper(target, method);
+                        event.getListenerList().register(busId, handler.getPriority(), handler);
                         ArrayList<IEventListener> handlers = listeners.get(target);
                         if (handlers == null) {
                             listeners.put(target, handlers = new ArrayList<IEventListener>());
                         }
 
-                        handlers.add(listener);
+                        handlers.add(handler);
                     }
                     catch (Throwable e) {
                         throw new RuntimeException("Failed to register event handler", e);
@@ -149,6 +160,8 @@ public class REghZyForgeBridge {
         }
 
         public MethodHandler(Object target, Method method) {
+            method.setAccessible(true);
+
             this.target = target;
             this.method = method;
             this.subInfo = method.getAnnotation(ForgeSubscribe.class);

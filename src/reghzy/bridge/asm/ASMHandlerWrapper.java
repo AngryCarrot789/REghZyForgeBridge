@@ -1,5 +1,6 @@
 package reghzy.bridge.asm;
 
+import com.google.common.collect.HashBiMap;
 import net.minecraftforge.event.Event;
 import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
@@ -15,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_SUPER;
@@ -27,7 +29,7 @@ import static org.objectweb.asm.Opcodes.PUTFIELD;
 import static org.objectweb.asm.Opcodes.RETURN;
 import static org.objectweb.asm.Opcodes.V1_6;
 
-class ASMHandlerWrapper implements IEventListener {
+public class ASMHandlerWrapper implements IEventListener {
     /**
      * keep track of how many ASMHandlers have been created, just in case the same method gets registered... for some reason...
      */
@@ -46,10 +48,7 @@ class ASMHandlerWrapper implements IEventListener {
      */
     private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(IEventListener.class.getDeclaredMethods()[0]);
 
-    /**
-     * classloader, used to get access to the define method to create the class during runtime
-     */
-    private static final ASMClassLoader LOADER = new ASMClassLoader();
+    private static final HashMap<Class<?>, ASMClassLoader> LOADER_MAP = new HashMap<Class<?>, ASMClassLoader>();
 
     private final IEventListener handler;
     private final ForgeSubscribe subInfo;
@@ -115,30 +114,17 @@ class ASMHandlerWrapper implements IEventListener {
 
         cw.visitEnd();
 
-        byte[] bytes = cw.toByteArray();
-
-        writeFile(bytes, name);
-
-        return LOADER.defineClass(name, bytes);
-    }
-
-    private static void writeFile(byte[] bytes, String className) {
-        File file = new File("C:\\Users\\kettl\\Desktop\\" + className + ".class");
-        try {
-            file.createNewFile();
-            OutputStream out= new BufferedOutputStream(new FileOutputStream(file));
-            out.write(bytes);
-            out.flush();
-            out.close();
+        ASMClassLoader loader = LOADER_MAP.get(method.getDeclaringClass());
+        if (loader == null) {
+            LOADER_MAP.put(method.getDeclaringClass(), loader = new ASMClassLoader(method.getDeclaringClass().getClassLoader()));
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        return loader.defineClass(name, cw.toByteArray());
     }
 
     private static String getUniqueClassNameFor(Method callback) {
         StringBuilder sb = new StringBuilder();
-        sb.append(ASMHandlerWrapper.class.getSimpleName()).append('_');
+        sb.append("RZASMHandler_");
         sb.append(callback.getDeclaringClass().getSimpleName()).append('_');
         sb.append(callback.getName()).append('_');
         sb.append(IDs++);
@@ -146,13 +132,8 @@ class ASMHandlerWrapper implements IEventListener {
     }
 
     private static class ASMClassLoader extends ClassLoader {
-        public ASMClassLoader() {
-            // not even this makes it work :'(
-            // ClassLoader.getSystemClassLoader() doesn't work either.
-            // PluginClassLoader most likely wont because im fairly certain each plugin has
-            // their own classloader so how could it know??? could use the thread stacktrace...
-            // probably won't work though
-            super(JavaPluginLoader.class.getClassLoader());
+        public ASMClassLoader(ClassLoader classLoader) {
+            super(classLoader);
         }
 
         public Class<?> defineClass(String name, byte[] bytes) {
